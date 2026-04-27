@@ -1,9 +1,10 @@
+// UC8: Quantity class NO LONGER handles conversion logic
+
 public class QuantityLength {
 
     private final double value;
     private final LengthUnit unit;
 
-    // Constructor
     public QuantityLength(double value, LengthUnit unit) {
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("Invalid value");
@@ -24,45 +25,42 @@ public class QuantityLength {
         return unit;
     }
 
-    // Convert to base unit (FEET)
-    private double toBase() {
-        return value * unit.getFactor();
-    }
-
-    // Convert to target unit
+    // ✅ Convert using UNIT (delegation)
     public QuantityLength convertTo(LengthUnit targetUnit) {
-        if (targetUnit == null) {
-            throw new IllegalArgumentException("Target unit cannot be null");
-        }
 
-        double base = this.toBase();
-        double converted = base / targetUnit.getFactor();
+        double base = unit.convertToBaseUnit(value);   // delegate
+        double converted = targetUnit.convertFromBaseUnit(base);
 
         return new QuantityLength(converted, targetUnit);
     }
 
-    // ✅ UC6 METHOD (default target = first operand)
-    public static QuantityLength add(QuantityLength a, QuantityLength b) {
-        return add(a, b, a.unit);
+    // ✅ Equality using base conversion
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) return true;
+        if (!(obj instanceof QuantityLength)) return false;
+
+        QuantityLength other = (QuantityLength) obj;
+
+        double thisBase = this.unit.convertToBaseUnit(this.value);
+        double otherBase = other.unit.convertToBaseUnit(other.value);
+
+        return Math.abs(thisBase - otherBase) < 0.0001;
     }
 
-    // ✅ ✅ UC7 METHOD (explicit target unit)
+    // ✅ UC7 addition (still works SAME)
     public static QuantityLength add(QuantityLength a, QuantityLength b, LengthUnit targetUnit) {
 
-        // Validation
-        if (a == null || b == null) {
-            throw new IllegalArgumentException("Operands cannot be null");
+        if (a == null || b == null || targetUnit == null) {
+            throw new IllegalArgumentException("Invalid input");
         }
 
-        if (targetUnit == null) {
-            throw new IllegalArgumentException("Target unit cannot be null");
-        }
+        double baseSum =
+                a.unit.convertToBaseUnit(a.value) +
+                        b.unit.convertToBaseUnit(b.value);
 
-        // Convert both to base (feet)
-        double baseSum = a.toBase() + b.toBase();
-
-        // Convert to target unit
-        double result = baseSum / targetUnit.getFactor();
+        double result = targetUnit.convertFromBaseUnit(baseSum);
 
         return new QuantityLength(result, targetUnit);
     }

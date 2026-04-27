@@ -1,36 +1,21 @@
-package com.quantity.measurement;
+// 🔥 UC6: ADD METHOD (Instance Method)
+public Quantity add(Quantity other) {
 
-public class QuantityMeasurementApp {
+    if (other == null)
+        throw new IllegalArgumentException("Other quantity cannot be null");
 
-    // 🔥 Method Overloading (UC5 concept)
+    if (!Double.isFinite(this.value) || !Double.isFinite(other.value))
+        throw new IllegalArgumentException("Invalid numeric value");
 
-    // Method 1: raw values
-    public static void demonstrateLengthConversion(double value,
-                                                   LengthUnit from,
-                                                   LengthUnit to) {
+    // Step 1: Convert both to base (feet)
+    double thisInFeet = this.unit.toFeet(this.value);
+    double otherInFeet = other.unit.toFeet(other.value);
 
-        double result = Quantity.convert(value, from, to);
+    // Step 2: Add
+    double sumInFeet = thisInFeet + otherInFeet;
 
-        System.out.println("Converted: " + value + " " + from +
-                " → " + result + " " + to);
-    }
+    // Step 3: Convert back to unit of first operand
+    double resultValue = this.unit.fromFeet(sumInFeet);
 
-    // Method 2: Quantity object
-    public static void demonstrateLengthConversion(Quantity q,
-                                                   LengthUnit to) {
-
-        Quantity result = q.convertTo(to);
-
-        System.out.println("Converted: " + q + " → " + result);
-    }
-
-    public static void main(String[] args) {
-
-        demonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCHES);
-        demonstrateLengthConversion(3.0, LengthUnit.YARDS, LengthUnit.FEET);
-        demonstrateLengthConversion(36.0, LengthUnit.INCHES, LengthUnit.YARDS);
-
-        Quantity q = new Quantity(1.0, LengthUnit.CENTIMETERS);
-        demonstrateLengthConversion(q, LengthUnit.INCHES);
-    }
+    return new Quantity(resultValue, this.unit);
 }

@@ -1,70 +1,78 @@
-// UC8: Quantity class NO LONGER handles conversion logic
-
-public class QuantityLength {
+// Class representing Weight Quantity
+public class QuantityWeight {
 
     private final double value;
-    private final LengthUnit unit;
+    private final WeightUnit unit;
 
-    public QuantityLength(double value, LengthUnit unit) {
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Invalid value");
-        }
+    private static final double EPSILON = 1e-6;
+
+    // Constructor with validation
+    public QuantityWeight(double value, WeightUnit unit) {
         if (unit == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
-
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid value");
+        }
         this.value = value;
         this.unit = unit;
     }
 
-    public double getValue() {
-        return value;
+    // Convert to another unit
+    public QuantityWeight convertTo(WeightUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+
+        double baseValue = unit.convertToBaseUnit(value);
+        double converted = targetUnit.convertFromBaseUnit(baseValue);
+
+        return new QuantityWeight(converted, targetUnit);
     }
 
-    public LengthUnit getUnit() {
-        return unit;
+    // Add (default: result in first operand unit)
+    public QuantityWeight add(QuantityWeight other) {
+        return add(other, this.unit);
     }
 
-    // ✅ Convert using UNIT (delegation)
-    public QuantityLength convertTo(LengthUnit targetUnit) {
-
-        double base = unit.convertToBaseUnit(value);   // delegate
-        double converted = targetUnit.convertFromBaseUnit(base);
-
-        return new QuantityLength(converted, targetUnit);
-    }
-
-    // ✅ Equality using base conversion
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) return true;
-        if (!(obj instanceof QuantityLength)) return false;
-
-        QuantityLength other = (QuantityLength) obj;
-
-        double thisBase = this.unit.convertToBaseUnit(this.value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
-
-        return Math.abs(thisBase - otherBase) < 0.0001;
-    }
-
-    // ✅ UC7 addition (still works SAME)
-    public static QuantityLength add(QuantityLength a, QuantityLength b, LengthUnit targetUnit) {
-
-        if (a == null || b == null || targetUnit == null) {
+    // Add with explicit target unit
+    public QuantityWeight add(QuantityWeight other, WeightUnit targetUnit) {
+        if (other == null || targetUnit == null) {
             throw new IllegalArgumentException("Invalid input");
         }
 
-        double baseSum =
-                a.unit.convertToBaseUnit(a.value) +
-                        b.unit.convertToBaseUnit(b.value);
+        double base1 = this.unit.convertToBaseUnit(this.value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
 
-        double result = targetUnit.convertFromBaseUnit(baseSum);
+        double sumBase = base1 + base2;
 
-        return new QuantityLength(result, targetUnit);
+        double result = targetUnit.convertFromBaseUnit(sumBase);
+
+        return new QuantityWeight(result, targetUnit);
     }
 
+    // Equals method (value-based comparison)
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        QuantityWeight other = (QuantityWeight) obj;
+
+        double base1 = this.unit.convertToBaseUnit(this.value);
+        double base2 = other.unit.convertToBaseUnit(other.value);
+
+        return Math.abs(base1 - base2) < EPSILON;
+    }
+
+    // hashCode (important for collections)
+    @Override
+    public int hashCode() {
+        long temp = Double.doubleToLongBits(unit.convertToBaseUnit(value));
+        return (int) (temp ^ (temp >>> 32));
+    }
+
+    // toString for readability
     @Override
     public String toString() {
         return "Quantity(" + value + ", " + unit + ")";

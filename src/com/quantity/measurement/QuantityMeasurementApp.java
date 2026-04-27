@@ -2,21 +2,22 @@ public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        System.out.println("=== UC8 Refactored Design ===");
+        // Equality
+        QuantityWeight w1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000.0, WeightUnit.GRAM);
 
-        QuantityLength q1 = new QuantityLength(1.0, LengthUnit.FEET);
-        QuantityLength q2 = new QuantityLength(12.0, LengthUnit.INCHES);
+        System.out.println("Equality: " + w1.equals(w2)); // true
 
         // Conversion
-        System.out.println(q1.convertTo(LengthUnit.INCHES));
+        QuantityWeight converted = w1.convertTo(WeightUnit.GRAM);
+        System.out.println("Converted: " + converted);
 
-        // Equality
-        System.out.println("Equal: " + q1.equals(q2));
+        // Addition (default unit)
+        QuantityWeight sum1 = w1.add(w2);
+        System.out.println("Sum (default): " + sum1);
 
-        // Addition
-        QuantityLength result =
-                QuantityLength.add(q1, q2, LengthUnit.FEET);
-
-        System.out.println("Addition: " + result);
+        // Addition (explicit unit)
+        QuantityWeight sum2 = w1.add(w2, WeightUnit.POUND);
+        System.out.println("Sum (pound): " + sum2);
     }
 }

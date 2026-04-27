@@ -1,64 +1,50 @@
-package com.quantity.measurement;
-
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuantityTest {
-
-    private static final double EPS = 1e-6;
+class QuantityWeightTest {
 
     @Test
-    void testSameUnitAddition() {
-        Quantity result = new Quantity(1.0, LengthUnit.FEET)
-                .add(new Quantity(2.0, LengthUnit.FEET));
-
-        assertEquals(3.0, result.convertTo(LengthUnit.FEET).convertTo(LengthUnit.FEET).value, EPS);
+    void testEquality_KgToGram() {
+        QuantityWeight w1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000.0, WeightUnit.GRAM);
+        assertTrue(w1.equals(w2));
     }
 
     @Test
-    void testFeetPlusInches() {
-        Quantity result = new Quantity(1.0, LengthUnit.FEET)
-                .add(new Quantity(12.0, LengthUnit.INCHES));
-
-        assertTrue(result.equals(new Quantity(2.0, LengthUnit.FEET)));
+    void testConversion_KgToPound() {
+        QuantityWeight w = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight result = w.convertTo(WeightUnit.POUND);
+        assertEquals(2.20462, result.convertTo(WeightUnit.POUND).convertTo(WeightUnit.POUND).value, 0.01);
     }
 
     @Test
-    void testInchesPlusFeet() {
-        Quantity result = new Quantity(12.0, LengthUnit.INCHES)
-                .add(new Quantity(1.0, LengthUnit.FEET));
+    void testAddition_KgPlusGram() {
+        QuantityWeight w1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000.0, WeightUnit.GRAM);
 
-        assertTrue(result.equals(new Quantity(24.0, LengthUnit.INCHES)));
+        QuantityWeight result = w1.add(w2);
+        assertTrue(result.equals(new QuantityWeight(2.0, WeightUnit.KILOGRAM)));
     }
 
     @Test
-    void testYardPlusFeet() {
-        Quantity result = new Quantity(1.0, LengthUnit.YARDS)
-                .add(new Quantity(3.0, LengthUnit.FEET));
+    void testAddition_WithTargetUnit() {
+        QuantityWeight w1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        QuantityWeight w2 = new QuantityWeight(1000.0, WeightUnit.GRAM);
 
-        assertTrue(result.equals(new Quantity(2.0, LengthUnit.YARDS)));
+        QuantityWeight result = w1.add(w2, WeightUnit.GRAM);
+        assertTrue(result.equals(new QuantityWeight(2000.0, WeightUnit.GRAM)));
     }
 
     @Test
-    void testZeroAddition() {
-        Quantity result = new Quantity(5.0, LengthUnit.FEET)
-                .add(new Quantity(0.0, LengthUnit.INCHES));
-
-        assertTrue(result.equals(new Quantity(5.0, LengthUnit.FEET)));
-    }
-
-    @Test
-    void testNegativeValues() {
-        Quantity result = new Quantity(5.0, LengthUnit.FEET)
-                .add(new Quantity(-2.0, LengthUnit.FEET));
-
-        assertTrue(result.equals(new Quantity(3.0, LengthUnit.FEET)));
-    }
-
-    @Test
-    void testNull() {
+    void testInvalidUnit() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new Quantity(1.0, LengthUnit.FEET).add(null);
+            new QuantityWeight(1.0, null);
         });
+    }
+
+    @Test
+    void testNullComparison() {
+        QuantityWeight w = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        assertFalse(w.equals(null));
     }
 }

@@ -5,15 +5,20 @@ public class QuantityMeasurementApp {
     public static void main(String[] args) {
 
         Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCHES);
 
-        // Convert 1 foot → inches
-        Quantity result = q1.convertTo(LengthUnit.INCH);
+        Quantity result1 = q1.add(q2);
+        System.out.println("1 FEET + 12 INCHES = " + result1);
 
-        System.out.println("Converted: " + result);
+        Quantity q3 = new Quantity(12.0, LengthUnit.INCHES);
+        Quantity q4 = new Quantity(1.0, LengthUnit.FEET);
 
-        // Cross-check equality
-        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+        Quantity result2 = q3.add(q4);
+        System.out.println("12 INCHES + 1 FEET = " + result2);
 
-        System.out.println("Are equal? " + result.equals(q2));
+        Quantity q5 = new Quantity(1.0, LengthUnit.YARDS);
+        Quantity q6 = new Quantity(3.0, LengthUnit.FEET);
+
+        System.out.println("1 YARD + 3 FEET = " + q5.add(q6));
     }
 }

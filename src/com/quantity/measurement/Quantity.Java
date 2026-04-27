@@ -6,18 +6,24 @@ public class Quantity {
     private LengthUnit unit;
 
     public Quantity(double value, LengthUnit unit) {
-
         if (unit == null) {
             throw new IllegalArgumentException("Unit cannot be null");
         }
-
         this.value = value;
         this.unit = unit;
     }
 
-    // Convert to base unit (Feet)
     private double toFeet() {
         return unit.toFeet(value);
+    }
+
+    // 🔥 NEW METHOD (UC4)
+    public Quantity convertTo(LengthUnit targetUnit) {
+
+        double valueInFeet = this.toFeet();
+        double convertedValue = targetUnit.fromFeet(valueInFeet);
+
+        return new Quantity(convertedValue, targetUnit);
     }
 
     @Override
@@ -30,5 +36,10 @@ public class Quantity {
         Quantity other = (Quantity) obj;
 
         return Double.compare(this.toFeet(), other.toFeet()) == 0;
+    }
+
+    @Override
+    public String toString() {
+        return value + " " + unit;
     }
 }

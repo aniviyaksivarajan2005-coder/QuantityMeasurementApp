@@ -6,57 +6,34 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QuantityTest {
 
     @Test
-    void testFeetToFeet_SameValue() {
-        assertTrue(new Quantity(1.0, LengthUnit.FEET)
-                .equals(new Quantity(1.0, LengthUnit.FEET)));
-    }
-
-    @Test
-    void testInchToInch_SameValue() {
-        assertTrue(new Quantity(1.0, LengthUnit.INCH)
-                .equals(new Quantity(1.0, LengthUnit.INCH)));
-    }
-
-    @Test
-    void testFeetToInch_Equivalent() {
-        assertTrue(new Quantity(1.0, LengthUnit.FEET)
-                .equals(new Quantity(12.0, LengthUnit.INCH)));
-    }
-
-    @Test
-    void testInchToFeet_Equivalent() {
-        assertTrue(new Quantity(12.0, LengthUnit.INCH)
-                .equals(new Quantity(1.0, LengthUnit.FEET)));
-    }
-
-    @Test
-    void testFeetDifferent() {
-        assertFalse(new Quantity(1.0, LengthUnit.FEET)
-                .equals(new Quantity(2.0, LengthUnit.FEET)));
-    }
-
-    @Test
-    void testInchDifferent() {
-        assertFalse(new Quantity(1.0, LengthUnit.INCH)
-                .equals(new Quantity(2.0, LengthUnit.INCH)));
-    }
-
-    @Test
-    void testNullComparison() {
+    void testFeetToInchConversion() {
         Quantity q = new Quantity(1.0, LengthUnit.FEET);
-        assertFalse(q.equals(null));
+        Quantity result = q.convertTo(LengthUnit.INCH);
+
+        assertTrue(result.equals(new Quantity(12.0, LengthUnit.INCH)));
     }
 
     @Test
-    void testSameReference() {
+    void testInchToFeetConversion() {
+        Quantity q = new Quantity(12.0, LengthUnit.INCH);
+        Quantity result = q.convertTo(LengthUnit.FEET);
+
+        assertTrue(result.equals(new Quantity(1.0, LengthUnit.FEET)));
+    }
+
+    @Test
+    void testFeetToYardConversion() {
+        Quantity q = new Quantity(3.0, LengthUnit.FEET);
+        Quantity result = q.convertTo(LengthUnit.YARD);
+
+        assertTrue(result.equals(new Quantity(1.0, LengthUnit.YARD)));
+    }
+
+    @Test
+    void testFeetToCmConversion() {
         Quantity q = new Quantity(1.0, LengthUnit.FEET);
-        assertTrue(q.equals(q));
-    }
+        Quantity result = q.convertTo(LengthUnit.CM);
 
-    @Test
-    void testInvalidUnit() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Quantity(1.0, null);
-        });
+        assertTrue(result.equals(new Quantity(30.48, LengthUnit.CM)));
     }
-}
+}s

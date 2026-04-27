@@ -2,20 +2,16 @@ package com.quantity.measurement;
 
 public class QuantityMeasurementApp {
 
-    // Method to check equality of two feet values
-    public boolean isEqual(double value1, double value2) {
-        return value1 == value2;
-    }
-
     public static void main(String[] args) {
 
-        QuantityMeasurementApp app = new QuantityMeasurementApp();
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
 
-        double feet1 = 5.0;
-        double feet2 = 5.0;
+        System.out.println("Are equal? " + q1.equals(q2));
 
-        boolean result = app.isEqual(feet1, feet2);
+        Quantity q3 = new Quantity(1.0, LengthUnit.INCH);
+        Quantity q4 = new Quantity(1.0, LengthUnit.INCH);
 
-        System.out.println("Are both values equal? " + result);
+        System.out.println("Are equal? " + q3.equals(q4));
     }
 }

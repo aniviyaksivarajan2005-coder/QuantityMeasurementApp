@@ -1,21 +1,74 @@
-// 🔥 UC6: ADD METHOD (Instance Method)
-public Quantity add(Quantity other) {
+public class QuantityLength {
 
-    if (other == null)
-        throw new IllegalArgumentException("Other quantity cannot be null");
+    private final double value;
+    private final LengthUnit unit;
 
-    if (!Double.isFinite(this.value) || !Double.isFinite(other.value))
-        throw new IllegalArgumentException("Invalid numeric value");
+    // Constructor
+    public QuantityLength(double value, LengthUnit unit) {
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Invalid value");
+        }
+        if (unit == null) {
+            throw new IllegalArgumentException("Unit cannot be null");
+        }
 
-    // Step 1: Convert both to base (feet)
-    double thisInFeet = this.unit.toFeet(this.value);
-    double otherInFeet = other.unit.toFeet(other.value);
+        this.value = value;
+        this.unit = unit;
+    }
 
-    // Step 2: Add
-    double sumInFeet = thisInFeet + otherInFeet;
+    public double getValue() {
+        return value;
+    }
 
-    // Step 3: Convert back to unit of first operand
-    double resultValue = this.unit.fromFeet(sumInFeet);
+    public LengthUnit getUnit() {
+        return unit;
+    }
 
-    return new Quantity(resultValue, this.unit);
+    // Convert to base unit (FEET)
+    private double toBase() {
+        return value * unit.getFactor();
+    }
+
+    // Convert to target unit
+    public QuantityLength convertTo(LengthUnit targetUnit) {
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+
+        double base = this.toBase();
+        double converted = base / targetUnit.getFactor();
+
+        return new QuantityLength(converted, targetUnit);
+    }
+
+    // ✅ UC6 METHOD (default target = first operand)
+    public static QuantityLength add(QuantityLength a, QuantityLength b) {
+        return add(a, b, a.unit);
+    }
+
+    // ✅ ✅ UC7 METHOD (explicit target unit)
+    public static QuantityLength add(QuantityLength a, QuantityLength b, LengthUnit targetUnit) {
+
+        // Validation
+        if (a == null || b == null) {
+            throw new IllegalArgumentException("Operands cannot be null");
+        }
+
+        if (targetUnit == null) {
+            throw new IllegalArgumentException("Target unit cannot be null");
+        }
+
+        // Convert both to base (feet)
+        double baseSum = a.toBase() + b.toBase();
+
+        // Convert to target unit
+        double result = baseSum / targetUnit.getFactor();
+
+        return new QuantityLength(result, targetUnit);
+    }
+
+    @Override
+    public String toString() {
+        return "Quantity(" + value + ", " + unit + ")";
+    }
 }

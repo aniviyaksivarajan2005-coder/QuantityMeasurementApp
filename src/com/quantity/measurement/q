@@ -1,0 +1,31 @@
+package com.quantity.measurement;
+
+public class QuantityMeasurementApp {
+
+    // Static method for Feet comparison
+    public static boolean compareFeet(double v1, double v2) {
+        Feet f1 = new Feet(v1);
+        Feet f2 = new Feet(v2);
+        return f1.equals(f2);
+    }
+
+    // Static method for Inch comparison
+    public static boolean compareInch(double v1, double v2) {
+        Inch i1 = new Inch(v1);
+        Inch i2 = new Inch(v2);
+        return i1.equals(i2);
+    }
+
+    public static void main(String[] args) {
+
+        // Hardcoded values (as per UC2)
+        double feet1 = 1.0;
+        double feet2 = 1.0;
+
+        double inch1 = 1.0;
+        double inch2 = 2.0;
+
+        System.out.println("Feet Equal: " + compareFeet(feet1, feet2));
+        System.out.println("Inch Equal: " + compareInch(inch1, inch2));
+    }
+}

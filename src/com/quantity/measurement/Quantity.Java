@@ -1,45 +1,36 @@
 package com.quantity.measurement;
 
-public class Quantity {
+public class QuantityMeasurementApp {
 
-    private double value;
-    private LengthUnit unit;
+    // 🔥 Method Overloading (UC5 concept)
 
-    public Quantity(double value, LengthUnit unit) {
-        if (unit == null) {
-            throw new IllegalArgumentException("Unit cannot be null");
-        }
-        this.value = value;
-        this.unit = unit;
+    // Method 1: raw values
+    public static void demonstrateLengthConversion(double value,
+                                                   LengthUnit from,
+                                                   LengthUnit to) {
+
+        double result = Quantity.convert(value, from, to);
+
+        System.out.println("Converted: " + value + " " + from +
+                " → " + result + " " + to);
     }
 
-    private double toFeet() {
-        return unit.toFeet(value);
+    // Method 2: Quantity object
+    public static void demonstrateLengthConversion(Quantity q,
+                                                   LengthUnit to) {
+
+        Quantity result = q.convertTo(to);
+
+        System.out.println("Converted: " + q + " → " + result);
     }
 
-    // 🔥 NEW METHOD (UC4)
-    public Quantity convertTo(LengthUnit targetUnit) {
+    public static void main(String[] args) {
 
-        double valueInFeet = this.toFeet();
-        double convertedValue = targetUnit.fromFeet(valueInFeet);
+        demonstrateLengthConversion(1.0, LengthUnit.FEET, LengthUnit.INCHES);
+        demonstrateLengthConversion(3.0, LengthUnit.YARDS, LengthUnit.FEET);
+        demonstrateLengthConversion(36.0, LengthUnit.INCHES, LengthUnit.YARDS);
 
-        return new Quantity(convertedValue, targetUnit);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (!(obj instanceof Quantity)) return false;
-
-        Quantity other = (Quantity) obj;
-
-        return Double.compare(this.toFeet(), other.toFeet()) == 0;
-    }
-
-    @Override
-    public String toString() {
-        return value + " " + unit;
+        Quantity q = new Quantity(1.0, LengthUnit.CENTIMETERS);
+        demonstrateLengthConversion(q, LengthUnit.INCHES);
     }
 }

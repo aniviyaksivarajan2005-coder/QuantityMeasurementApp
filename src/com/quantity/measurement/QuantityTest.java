@@ -5,35 +5,66 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityTest {
 
-    @Test
-    void testFeetToInchConversion() {
-        Quantity q = new Quantity(1.0, LengthUnit.FEET);
-        Quantity result = q.convertTo(LengthUnit.INCH);
+    private static final double EPS = 1e-6;
 
-        assertTrue(result.equals(new Quantity(12.0, LengthUnit.INCH)));
+    @Test
+    void testFeetToInches() {
+        assertEquals(12.0,
+                Quantity.convert(1.0, LengthUnit.FEET, LengthUnit.INCHES),
+                EPS);
     }
 
     @Test
-    void testInchToFeetConversion() {
-        Quantity q = new Quantity(12.0, LengthUnit.INCH);
-        Quantity result = q.convertTo(LengthUnit.FEET);
-
-        assertTrue(result.equals(new Quantity(1.0, LengthUnit.FEET)));
+    void testInchesToFeet() {
+        assertEquals(2.0,
+                Quantity.convert(24.0, LengthUnit.INCHES, LengthUnit.FEET),
+                EPS);
     }
 
     @Test
-    void testFeetToYardConversion() {
-        Quantity q = new Quantity(3.0, LengthUnit.FEET);
-        Quantity result = q.convertTo(LengthUnit.YARD);
-
-        assertTrue(result.equals(new Quantity(1.0, LengthUnit.YARD)));
+    void testYardsToInches() {
+        assertEquals(36.0,
+                Quantity.convert(1.0, LengthUnit.YARDS, LengthUnit.INCHES),
+                EPS);
     }
 
     @Test
-    void testFeetToCmConversion() {
-        Quantity q = new Quantity(1.0, LengthUnit.FEET);
-        Quantity result = q.convertTo(LengthUnit.CM);
-
-        assertTrue(result.equals(new Quantity(30.48, LengthUnit.CM)));
+    void testCmToInches() {
+        assertEquals(1.0,
+                Quantity.convert(2.54, LengthUnit.CENTIMETERS, LengthUnit.INCHES),
+                EPS);
     }
-}s
+
+    @Test
+    void testZero() {
+        assertEquals(0.0,
+                Quantity.convert(0.0, LengthUnit.FEET, LengthUnit.INCHES),
+                EPS);
+    }
+
+    @Test
+    void testNegative() {
+        assertEquals(-12.0,
+                Quantity.convert(-1.0, LengthUnit.FEET, LengthUnit.INCHES),
+                EPS);
+    }
+
+    @Test
+    void testSameUnit() {
+        assertEquals(5.0,
+                Quantity.convert(5.0, LengthUnit.FEET, LengthUnit.FEET),
+                EPS);
+    }
+
+    @Test
+    void testInvalidUnit() {
+        assertThrows(IllegalArgumentException.class, () ->
+                Quantity.convert(1.0, null, LengthUnit.FEET));
+    }
+
+    @Test
+    void testInvalidValue() {
+        assertThrows(IllegalArgumentException.class, () ->
+                Quantity.convert(Double.NaN, LengthUnit.FEET, LengthUnit.INCHES));
+    }
+}
